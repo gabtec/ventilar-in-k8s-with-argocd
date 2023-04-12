@@ -4,12 +4,12 @@ on:
   push:
     branches:
       - 'main'
-    # paths:
-    #   - 'infra/**'
+    paths:
+      - 'infra/**'
 
 jobs:
   my-debug:
     runs-on: ubuntu-22.04
     steps:
       - name: Console log
-        run: echo 'infra deployed'
+        run: echo '[LOG::gt] infra deployed'
