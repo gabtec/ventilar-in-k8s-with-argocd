@@ -1,0 +1,15 @@
+name: Deploy K8S Cluster
+
+on:
+  push:
+    - branch:
+        - 'main'
+    - paths:
+        - 'infra/**'
+
+jobs:
+  my-debug:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Console log
+        run: echo 'infra deployed'
