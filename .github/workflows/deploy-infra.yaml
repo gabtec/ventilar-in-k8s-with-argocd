@@ -3,7 +3,7 @@ name: Deploy K8S Cluster
 on:
   push:
     branches: ['main']
-    paths: ['infra/**']
+    paths: ['infra/*/**']
 
 jobs:
   my-debug:
