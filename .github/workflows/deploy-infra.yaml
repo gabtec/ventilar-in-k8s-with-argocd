@@ -2,10 +2,10 @@ name: Deploy K8S Cluster
 
 on:
   push:
-    - branch:
-        - 'main'
-    - paths:
-        - 'infra/**'
+    branches:
+      - 'main'
+    paths:
+      - 'infra/**'
 
 jobs:
   my-debug:
