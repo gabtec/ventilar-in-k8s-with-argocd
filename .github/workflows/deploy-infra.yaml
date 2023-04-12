@@ -2,8 +2,9 @@ name: Deploy K8S Cluster
 
 on:
   push:
-    branches: ['main/infra/**']
-    # paths: ['infra/**']
+    branches: ['main']
+    paths: ['infra/**']
+  workflow_dispatch:
 
 jobs:
   my-debug:
