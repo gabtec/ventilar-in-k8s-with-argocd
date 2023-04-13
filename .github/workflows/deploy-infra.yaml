@@ -22,7 +22,7 @@ jobs:
         continue-on-error: true
       - name: Warning if tf code not formatted
         if: steps.fmt.outputs.exitcode != 0
-        run: echo "[Warning:] Terraform code is not properly formatted. See file(s) ${{steps.fmt.outputs.stderr}}"
+        run: echo [Warning:] Terraform code is not properly formatted. See file(s) ${{steps.fmt.outputs.stderr}}
       # - name: Terraform Init
       #   id: init
       #   run: terraform init
