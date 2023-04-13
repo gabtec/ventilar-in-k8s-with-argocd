@@ -10,5 +10,26 @@ jobs:
   my-debug:
     runs-on: ubuntu-22.04
     steps:
-      - name: Console log
-        run: echo '[LOG::gt] infra deployed'
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: HashiCorp - Setup Terraform
+        uses: hashicorp/setup-terraform@v2.0.3
+        with:
+          terraform_version: 1.4.0
+      - name: Terraform format code
+        id: fmt
+        run: terraform fmt -recursive -check infra/
+        continue-on-error: true
+      - name: Warning if tf code not formatted
+        if: steps.fmt.outputs.exitcode != 0
+        run: echo "[Warning:] Terraform code is not properly formatted. See file(s) ${steps.fmt.outputs.stderr}"
+      # - name: Terraform Init
+      #   id: init
+      #   run: terraform init
+      # - name: Terraform Validate
+      #   id: validate
+      #   run: terraform validate -no-color
+      # - name: Terraform Plan
+      #   id: plan
+      #   run: terraform plan -no-color
+      #   continue-on-error: true
