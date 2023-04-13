@@ -70,6 +70,25 @@ $ az ad sp create-for-rbac --name "github-tf-2023-04-13-11-00-00" --role="Contri
 
 ---
 
+### 3. Connect to the created AKS Cluster
+
+```sh
+# this will merge the kubeconfig file with our local ~/.kube/config
+$ az aks get-credentials --resource-group gabtec-rg --name gabtec-aks
+
+# test it
+$ kubectl get nodes
+```
+
+### 4. Hard delete
+
+```sh
+# deleting the Azure resource group will delete the cluster
+$ az group delete --name gabtec-rg --yes --no-wait
+
+# (SOS) Also delete the resource group that has the TF backend storage
+```
+
 # END
 
 **Don't forget to delete all cloud resources created, to avoid unexpected $costs**

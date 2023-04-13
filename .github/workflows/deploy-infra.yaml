@@ -16,14 +16,12 @@ jobs:
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
       TF_VAR_appId: ${{ secrets.AZ_AD_CLIENT_ID }}
       TF_VAR_password: ${{ secrets.AZ_AD_CLIENT_SECRET }}
+    outputs:
+      AZ_RGROUP: ${{steps.tfouts.outputs.AZ_RGROUP}}
+      AZ_KUB_NAME: ${{steps.tfouts.outputs.AZ_KUB_NAME}}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-      # - name: Azure Login
-      #   uses: Azure/login@v1
-      #   with:
-      #     creds: ${{ secrets.AZ_CREDENTIALS }}
 
       - name: Azure CLI login
         uses: azure/CLI@v1
@@ -35,6 +33,7 @@ jobs:
         uses: hashicorp/setup-terraform@v2.0.3
         with:
           terraform_version: 1.4.0
+          terraform_wrapper: false #will allow output to variables
       - name: Terraform format code
         id: fmt
         run: terraform fmt -recursive -check infra/
@@ -59,3 +58,34 @@ jobs:
         id: apply
         working-directory: ./infra/terraform-k8s-azure
         run: terraform apply -auto-approve -no-color
+      - name: Set Variables to next job
+        id: tfouts
+        working-directory: ./infra/terraform-k8s-azure
+        run: |
+          AZ_RGROUP=$(terraform output resource_group_name)
+          AZ_KUB_NAME=$(terraform output kubernetes_cluster_name)
+  install-k8s-tools:
+    runs-on: ubuntu-22.04
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZ_AD_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZ_AD_CLIENT_SECRET }}
+      ARM_TENANT_ID: ${{ secrets.AZ_AD_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
+    steps:
+      - name: Azure CLI login
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.47.0
+          inlineScript: |
+            az login --service-principal -u ${{ secrets.AZ_AD_CLIENT_ID }} -p ${{ secrets.AZ_AD_CLIENT_SECRET }} --tenant ${{ secrets.AZ_AD_TENANT_ID }}
+      - uses: azure/aks-set-context@v3
+        with:
+          resource-group: ${{vars.AZ_RGROUP}}
+          cluster-name: ${{vars.AZ_KUB_NAME}}
+      - name: Kubectl tool installer
+        uses: Azure/setup-kubectl@v3
+      - name: Install ArgoCD
+        run: |
+          kubectl create namespace argocd
+          kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+          kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
