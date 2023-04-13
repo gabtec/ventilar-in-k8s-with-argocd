@@ -64,31 +64,29 @@ jobs:
         run: |
           echo "AZ_RGROUP=$(terraform output resource_group_name)" >> "$GITHUB_OUTPUT"
           echo "AZ_KUB_NAME=$(terraform output kubernetes_cluster_name)" >> "$GITHUB_OUTPUT"
-  install-k8s-tools:
-    needs: [terraform-infra]
-    runs-on: ubuntu-22.04
-    env:
-      ARM_CLIENT_ID: ${{ secrets.AZ_AD_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.AZ_AD_CLIENT_SECRET }}
-      ARM_TENANT_ID: ${{ secrets.AZ_AD_TENANT_ID }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
-    steps:
-      - name: Azure CLI login
-        uses: azure/CLI@v1
-        with:
-          azcliversion: 2.47.0
-          inlineScript: |
-            az login --service-principal -u ${{ secrets.AZ_AD_CLIENT_ID }} -p ${{ secrets.AZ_AD_CLIENT_SECRET }} --tenant ${{ secrets.AZ_AD_TENANT_ID }}
-      - name: Kubectl tool installer
-        uses: Azure/setup-kubectl@v3
-      - uses: azure/aks-set-context@v3
-        with:
-          resource-group: ${{needs.terraform-infra.outputs.AZ_RGROUP}}
-          cluster-name: ${{needs.terraform-infra.outputs.AZ_KUB_NAME}}
-          admin: 'false'
-          use-kubelogin: 'true'
-      - name: Install ArgoCD
-        run: |
-          kubectl create namespace argocd
-          kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-          kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+  # install-k8s-tools:
+  #   needs: [terraform-infra]
+  #   runs-on: ubuntu-22.04
+  #   env:
+  #     ARM_CLIENT_ID: ${{ secrets.AZ_AD_CLIENT_ID }}
+  #     ARM_CLIENT_SECRET: ${{ secrets.AZ_AD_CLIENT_SECRET }}
+  #     ARM_TENANT_ID: ${{ secrets.AZ_AD_TENANT_ID }}
+  #     ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
+  #   steps:
+  #     - name: Azure CLI login
+  #       uses: azure/CLI@v1
+  #       with:
+  #         azcliversion: 2.47.0
+  #         inlineScript: |
+  #           az login --service-principal -u ${{ secrets.AZ_AD_CLIENT_ID }} -p ${{ secrets.AZ_AD_CLIENT_SECRET }} --tenant ${{ secrets.AZ_AD_TENANT_ID }}
+  #     - name: Kubectl tool installer
+  #       uses: Azure/setup-kubectl@v3
+  #     - uses: azure/aks-set-context@v3
+  #       with:
+  #         resource-group: ${{needs.terraform-infra.outputs.AZ_RGROUP}}
+  #         cluster-name: ${{needs.terraform-infra.outputs.AZ_KUB_NAME}}
+  #     - name: Install ArgoCD
+  #       run: |
+  #         kubectl create namespace argocd
+  #         kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+  #         kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
