@@ -65,6 +65,7 @@ jobs:
           AZ_RGROUP=$(terraform output resource_group_name)
           AZ_KUB_NAME=$(terraform output kubernetes_cluster_name)
   install-k8s-tools:
+    needs: [terraform-infra]
     runs-on: ubuntu-22.04
     env:
       ARM_CLIENT_ID: ${{ secrets.AZ_AD_CLIENT_ID }}
