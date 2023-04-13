@@ -85,6 +85,8 @@ jobs:
         with:
           resource-group: ${{needs.terraform-infra.outputs.AZ_RGROUP}}
           cluster-name: ${{needs.terraform-infra.outputs.AZ_KUB_NAME}}
+          admin: 'false'
+          use-kubelogin: 'true'
       - name: Install ArgoCD
         run: |
           kubectl create namespace argocd
