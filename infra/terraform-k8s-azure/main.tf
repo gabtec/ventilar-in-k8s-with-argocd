@@ -29,14 +29,3 @@ terraform {
 provider "azurerm" {
   features {}
 }
-
-# todo...
-resource "azurerm_resource_group" "default" {
-  name     = "${var.PROJ_OWNER}-rg"
-  location = var.CLOUD_REGION
-
-  tags = {
-    environment = var.PROJ_ENV_TAG
-    project     = var.PROJ_NAME
-  }
-}
