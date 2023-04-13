@@ -62,8 +62,8 @@ jobs:
         id: tfouts
         working-directory: ./infra/terraform-k8s-azure
         run: |
-          AZ_RGROUP=$(terraform output resource_group_name)
-          AZ_KUB_NAME=$(terraform output kubernetes_cluster_name)
+          echo "AZ_RGROUP=$(terraform output resource_group_name)" >> "$GITHUB_OUTPUT"
+          echo "AZ_KUB_NAME=$(terraform output kubernetes_cluster_name)" >> "$GITHUB_OUTPUT"
   install-k8s-tools:
     needs: [terraform-infra]
     runs-on: ubuntu-22.04
