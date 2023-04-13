@@ -10,7 +10,7 @@ terraform {
     # variables can not be used in this block
     resource_group_name  = "tfstate-rg"
     storage_account_name = "tfstate8kkwo"
-    container_name= "tfstate"
+    container_name       = "tfstate"
     key                  = "terraform.tfstate"
   }
 
