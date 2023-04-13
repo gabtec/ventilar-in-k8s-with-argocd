@@ -33,7 +33,7 @@ variable "PROJ_OWNER" {
 variable "PROJ_NAME" {
   description = "The name of the project"
   type        = string
-  default     = "project-alpha"
+  default     = "project-beta"
 }
 
 variable "PROJ_ENV_TAG" {
