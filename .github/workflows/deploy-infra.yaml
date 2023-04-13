@@ -79,12 +79,12 @@ jobs:
           azcliversion: 2.47.0
           inlineScript: |
             az login --service-principal -u ${{ secrets.AZ_AD_CLIENT_ID }} -p ${{ secrets.AZ_AD_CLIENT_SECRET }} --tenant ${{ secrets.AZ_AD_TENANT_ID }}
-      - uses: azure/aks-set-context@v3
-        with:
-          resource-group: ${{vars.AZ_RGROUP}}
-          cluster-name: ${{vars.AZ_KUB_NAME}}
       - name: Kubectl tool installer
         uses: Azure/setup-kubectl@v3
+      - uses: azure/aks-set-context@v3
+        with:
+          resource-group: ${{needs.terraform-infra.outputs.AZ_RGROUP}}
+          cluster-name: ${{needs.terraform-infra.outputs.AZ_KUB_NAME}}
       - name: Install ArgoCD
         run: |
           kubectl create namespace argocd
