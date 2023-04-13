@@ -9,6 +9,11 @@ on:
 jobs:
   terraform-infra:
     runs-on: ubuntu-22.04
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZ_AD_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZ_AD_CLIENT_SECRET }}
+      ARM_TENANT_ID: ${{ secrets.AZ_AD_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZ_SUBSCRIPTION_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -17,18 +22,13 @@ jobs:
       #   uses: Azure/login@v1
       #   with:
       #     creds: ${{ secrets.AZ_CREDENTIALS }}
-      # - name: Azure CLI login
-      #   uses: azure/CLI@v1
-      #   with:
-      #     azcliversion: 2.47.0
-      #     inlineScript: |
-      - name: Expose Azure Credentials to Terraform
-        run: |
-          export ARM_CLIENT_ID=${{ secrets.AZ_AD_CLIENT_ID }}
-          export ARM_CLIENT_SECRET=${{ secrets.AZ_AD_CLIENT_SECRET }}
-          export ARM_TENANT_ID=${{ secrets.AZ_AD_TENANT_ID }}
-          export ARM_SUBSCRIPTION_ID=${{ secrets.AZ_SUBSCRIPTION_ID }}
 
+      - name: Azure CLI login
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.47.0
+          inlineScript: |
+            az login --service-principal -u ${{ secrets.AZ_AD_CLIENT_ID }} -p ${{ secrets.AZ_AD_CLIENT_SECRET }} --tenant ${{ secrets.AZ_AD_TENANT_ID }}
       - name: HashiCorp - Setup Terraform
         uses: hashicorp/setup-terraform@v2.0.3
         with:
