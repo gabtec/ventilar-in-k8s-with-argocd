@@ -89,6 +89,32 @@ $ az group delete --name gabtec-rg --yes --no-wait
 # (SOS) Also delete the resource group that has the TF backend storage
 ```
 
+### 5. Install ArgoCD
+
+```sh
+# create ns
+$ k create namespace argocd
+
+# install ArgoCD
+$ k apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+# by default argocd don't expose it's service (it's of type ClusterIP)
+$ k get svc -n argocd
+
+# expose it to internet
+$ kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+
+# get the public IP
+$ k get svc -n argocd
+
+#### open browser and nav to:
+#### httpS://<ip>
+
+# from a secret generated on install
+$ k get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d
+# note: last % from the decode is not included in password
+```
+
 # END
 
 **Don't forget to delete all cloud resources created, to avoid unexpected $costs**
