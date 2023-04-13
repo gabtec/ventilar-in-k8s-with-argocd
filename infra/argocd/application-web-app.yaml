@@ -1,0 +1,23 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: web
+spec:
+  project: default
+  source:
+    path: frontend/k8s
+    repoURL: 'https://github.com/gabtec/ventilar-in-k8s-with-argocd'
+    targetRevision: HEAD
+    directory:
+      include: frontend/
+  destination:
+    name: ''
+    namespace: default
+    server: 'https://kubernetes.default.svc'
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true # altera quando o repo git for alterado
+      prune: true # elimina algum obj que seja eliminado no repo
