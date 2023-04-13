@@ -16,7 +16,7 @@ jobs:
       - name: Azure Login
         uses: Azure/login@v1
         with:
-          creds: '{"clientId":"${{ secrets.AZ_AD_CLIENT_ID }}","clientSecret":"${{ secrets.AZ_AD_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZ_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZ_AD_TENANT_ID }}","resourceManagerEndpointUrl":"https://management.azure.com/"}'
+          creds: ${{ secrets.AZ_CREDENTIALS }}
 
       - name: HashiCorp - Setup Terraform
         uses: hashicorp/setup-terraform@v2.0.3
