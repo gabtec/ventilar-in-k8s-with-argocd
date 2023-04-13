@@ -12,6 +12,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          creds: '{"clientId":"${{ secrets.AZ_AD_CLIENT_ID }}","clientSecret":"${{ secrets.AZ_AD_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZ_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZ_AD_TENANT_ID }}","resourceManagerEndpointUrl":"https://management.azure.com/"}'
+
       - name: HashiCorp - Setup Terraform
         uses: hashicorp/setup-terraform@v2.0.3
         with:
@@ -23,13 +29,13 @@ jobs:
       - name: Warning if tf code not formatted
         if: steps.fmt.outputs.exitcode != 0
         run: echo "[Warning:] Terraform code is not properly formatted."
-      # - name: Terraform Init
-      #   id: init
-      #   run: terraform init
-      # - name: Terraform Validate
-      #   id: validate
-      #   run: terraform validate -no-color
-      # - name: Terraform Plan
-      #   id: plan
-      #   run: terraform plan -no-color
-      #   continue-on-error: true
+      - name: Terraform Init
+        id: init
+        run: terraform init
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color
+        continue-on-error: true
