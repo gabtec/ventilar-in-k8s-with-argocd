@@ -8,10 +8,10 @@ terraform {
 
   backend "azurerm" {
     # variables can not be used in this block
-    resource_group_name= "tfstate-rg"
+    resource_group_name  = "tfstate-rg"
     storage_account_name = "tfstate8kkwo"
-    container_name   = "tfstate"
-    key   = "terraform.tfstate"
+    container_name       = "tfstate"
+    key       = "terraform.tfstate"
   }
 
   required_providers {
